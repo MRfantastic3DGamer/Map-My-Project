@@ -10,6 +10,7 @@ def cpp_rule(file_path, project_path):
     file_module_path = file_path[:file_path.rfind('\\')]
 
     imported_modules = set()
+    imported_files = set()
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
             imports = re.findall(import_regex, file.read())
@@ -17,13 +18,13 @@ def cpp_rule(file_path, project_path):
                 search = re.search(module_regex1, im)
                 if search:
                     import_path = file_module_path + '\\' + im[search.start() : search.end()]
-                    imported_modules.add(import_path.lstrip(project_path))
+                    imported_files.add(import_path.lstrip(project_path))
                 search = re.search(module_regex2, im)
                 if search:
                     imported_modules.add(im[search.start() : search.end()])
     except UnicodeDecodeError as e:
         print(f"Error reading file {file_path}: {e}")
-    return imported_modules
+    return imported_files, imported_modules
 
 rules = {
     'cpp': cpp_rule,
